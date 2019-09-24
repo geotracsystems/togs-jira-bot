@@ -61,9 +61,11 @@ def jira_parse(**payload):
     for match in matches:
         jira_issue.append(match[0].strip())
     print(jira_issue)
+    unique_jira_issue = list(set(jira_issue))
+    print(unique_jira_issue)
 
     # Iterate through matches, get summary and publish to Slack
-    for issue in jira_issue:
+    for issue in unique_jira_issue:
         summary = jira_summary(issue)
 
         if summary is None:
@@ -78,7 +80,7 @@ def jira_parse(**payload):
 
 # Main Program
 # Initial project list (non-TOGS apps already included in list)
-togs_project_list = ['MAINE', 'APPL']
+togs_project_list = ['MAINE', 'APPL', 'PDE']
 togs_project_regex_str = ''
 
 # Get all TOGS projects from JIRA and add to project list
