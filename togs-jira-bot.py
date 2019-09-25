@@ -59,7 +59,7 @@ def jira_parse(**payload):
     matches = JIRA_REGEX_COMP.findall(text)
     # print(matches) #Uncomment for debugging Regex issues
     for match in matches:
-        jira_issue.append(match[0].strip())
+        jira_issue.append(match.strip())
     print(jira_issue)
     unique_jira_issue = list(set(jira_issue))
     print(unique_jira_issue)
@@ -79,29 +79,16 @@ def jira_parse(**payload):
 
 
 # Main Program
-# Initial project list (non-TOGS apps already included in list)
-togs_project_list = ['MAINE', 'APPL', 'PDE']
-togs_project_regex_str = ''
+'''
+# Jack suggestion
+# [A-Za-z]+-\d+(?=\W?(\s|$))
+# Old regex
+# f"((?!(\s|\.|,|\"|\'|\(|/))({project_list})\-[0-9]{{1,}})"
+'''
 
-# Get all TOGS projects from JIRA and add to project list
-project = requests.get(JIRA_URL + JIRA_API_PROJ, auth=(JIRA_SVC_USER, JIRA_SVC_PASS))
-all_project = json.loads(project.content)
-for item in all_project:
-    if 'projectCategory' in item:
-        if item["projectCategory"]["name"] == 'TOGS':
-            togs_project_list.append(item["key"])
-
-print(f"Monitoring {len(togs_project_list)} JIRA Projects")
-print(togs_project_list)
-
-# Make regex string and compile
-for tpr in togs_project_list:
-    togs_project_regex_str = togs_project_regex_str + tpr + '|'
-project_list = togs_project_regex_str[:-1]
-
-jira_regex = f"((?!(\s|\.|,|\"|\'|\(|/))({project_list})\-[0-9]{{1,}})"
-JIRA_REGEX_COMP = re.compile(jira_regex, re.IGNORECASE)
-
+print(f"Monitoring all JIRA Projects accessible to {JIRA_SVC_USER}")
+jira_regex = '[A-Za-z]{1,10}-\\d+\\b'
+JIRA_REGEX_COMP = re.compile(jira_regex)
 # Start Slack RTM client to receive bot messages
 rtm_client = slack.RTMClient(token=SLACK_TOKEN)
 rtm_client.start()
