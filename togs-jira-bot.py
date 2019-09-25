@@ -61,7 +61,7 @@ def jira_parse(**payload):
     for match in matches:
         jira_issue.append(match.strip())
     print(jira_issue)
-    unique_jira_issue = list(set(jira_issue))
+    unique_jira_issue = sorted(set(jira_issue), key=jira_issue.index)
     print(unique_jira_issue)
 
     # Iterate through matches, get summary and publish to Slack
