@@ -87,7 +87,7 @@ def jira_parse(**payload):
 '''
 
 print(f"Monitoring all JIRA Projects accessible to {JIRA_SVC_USER}")
-jira_regex = '[A-Za-z]{1,10}-\\d+\\b'
+jira_regex = '[A-Za-z]{1,10}-\\d+\\b(?!\\.\\d)'
 JIRA_REGEX_COMP = re.compile(jira_regex)
 # Start Slack RTM client to receive bot messages
 rtm_client = slack.RTMClient(token=SLACK_TOKEN)
