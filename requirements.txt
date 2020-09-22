@@ -1,2 +1,2 @@
-python-slackclient
+slackclient
 requests
