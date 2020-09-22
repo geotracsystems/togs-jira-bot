@@ -1,10 +1,11 @@
+import os
 import re
 import json
 import slack
 import requests
 from requests.exceptions import HTTPError
-from properties import *
 
+JIRA_URL = 'https://jira.trimble.tools/'
 JIRA_API_PROJ = 'rest/api/latest/project'
 JIRA_API_ISSUE = 'rest/api/latest/issue/'
 JIRA_WEB_ISSUE = 'browse/'
@@ -15,7 +16,7 @@ global JIRA_REGEX_COMP
 # Gets JIRA summary for an issue passed to it. This is the slowest part of the program
 def jira_summary(issue):
     try:
-        jira_response = requests.get(JIRA_URL + JIRA_API_ISSUE + issue, auth=(JIRA_SVC_USER, JIRA_SVC_PASS))
+        jira_response = requests.get(JIRA_URL + JIRA_API_ISSUE + issue, auth=(os.getenv('JIRA_SVC_USER'), os.getenv('JIRA_SVC_PASS')))
     except HTTPError as http_err:
         print(f'HTTP Error: {http_err}')
         return
@@ -79,16 +80,8 @@ def jira_parse(**payload):
 
 
 # Main Program
-'''
-# Jack suggestion
-# [A-Za-z]+-\d+(?=\W?(\s|$))
-# Old regex
-# f"((?!(\s|\.|,|\"|\'|\(|/))({project_list})\-[0-9]{{1,}})"
-'''
-
-print(f"Monitoring all JIRA Projects accessible to {JIRA_SVC_USER}")
 jira_regex = '[A-Za-z]{1,10}-\\d+\\b(?![.?\\-]\\d)'
 JIRA_REGEX_COMP = re.compile(jira_regex)
 # Start Slack RTM client to receive bot messages
-rtm_client = slack.RTMClient(token=SLACK_TOKEN)
+rtm_client = slack.RTMClient(token=os.getenv('SLACK_TOKEN')
 rtm_client.start()
